@@ -28,21 +28,16 @@ void latch() {
     index++;
     nextframe += frames[index];
   }
-  // Low is on!
   buttons = ~button[index];
-  // Keep all values except 3 | set the third value 
   PORTC = (PORTC & ~dataMask) | ((buttons & 1) << dataShift);
   buttons >>= 1;
 }
 
 void clock() {  
-  // Keep all values except 3 | set the third value 
-  // Equivalent to digitalWrite(dataPin, (buttons & 1))
   PORTC = (PORTC & ~dataMask) | ((buttons & 1) << dataShift);
   buttons >>= 1;
 }
 
 void loop() {
-  /* wait */
 }
 
