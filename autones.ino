@@ -15,29 +15,37 @@
  *  thats about it!
 
 */
+
+#define OFF 0
+#define A 1 << 0
+#define B 1 << 1
+#define SELECT 1 << 2
+#define START 1 << 3
+#define UP 1 << 4
+#define DOWN 1 << 5
+#define LEFT 1 << 6
+#define RIGHT 1 << 7
+
+#define HZ 60
+
+// This is our program!
+byte button[] = { START,  OFF, A};
+byte frames[] = {  1*HZ, 6*HZ, 0};
+
 #define clockInterrupt 0
 #define latchInterrupt 1
 
 #define dataShift 2
 #define dataMask (1 << dataShift)
 
-// Right Left Down Up Start Select B ???
-byte buttons;
-byte latchCount;
-
+byte buttons = 0;
+uint16_t frame = 0;
 int index=0;
-int frame=0;
-
-// what buttons to press, 
-byte button[] = { 8, 0, 1};
-byte frames[] = { 1*15, 6*15, 0};
 
 uint16_t nextframe=frames[0];
 
 void setup() {
   pinMode(A2, OUTPUT);
-
-  latchCount = 0;
 
   attachInterrupt(latchInterrupt, latch, RISING);
   attachInterrupt(clockInterrupt, clock, RISING);
@@ -46,26 +54,22 @@ void setup() {
 }
 
 void latch() {
-  if (latchCount % 4 == 0)
-  {
-    latchCount = 0;
-    buttons = button[index];
-    // Keep all values except 3 | set the third value 
-    PORTC = (PORTC & ~dataMask) | ((~(buttons & 1)) << dataShift);
-    buttons >>= 1;
-    frame++;
-    if(frame > nextframe && index < sizeof(frames)-1 ){
-      index++;
-      nextframe += frames[index];
-    }
+  // Low is on!
+  buttons = ~button[index];
+  // Keep all values except 3 | set the third value 
+  PORTC = (PORTC & ~dataMask) | ((buttons & 1) << dataShift);
+  buttons >>= 1;
+  frame++;
+  if(frame > nextframe && index < sizeof(frames)-1 ){
+    nextframe += frames[++index];
   }
-  latchCount++;
 }
 
 void clock() {  
-    // Keep all values except 3 | set the third value 
-    PORTC = (PORTC & ~dataMask) | ((~(buttons & 1)) << dataShift);
-    buttons >>= 1;
+  // Keep all values except 3 | set the third value 
+  // Equivalent to digitalWrite(dataPin, (buttons & 1))
+  PORTC = (PORTC & ~dataMask) | ((buttons & 1) << dataShift);
+  buttons >>= 1;
 }
 
 void loop() {
