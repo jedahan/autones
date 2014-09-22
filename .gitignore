@@ -1,1 +1,2 @@
-autones.hex
+*.hex
+*.objdump
