@@ -27,7 +27,7 @@ isp: $(TARGET)
 %.hex: %.elf
 	$(OBJCOPY) -O ihex -R .eeprom $< $@
 
-%.objdump: %.hex
+%.objdump: %.elf
 	$(OBJDUMP) -d $< > $@
 
 clean:
