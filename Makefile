@@ -1,7 +1,3 @@
-CC = avr-g++
-OBJCOPY = avr-objcopy
-OBJDUMP = avr-objdump
-
 PROGRAM    = autones
 
 ISPTOOL	   = arduino
@@ -9,23 +5,23 @@ ISPPORT	   = /dev/ttyACM0
 ISPSPEED   = 115200
 MCU_TARGET = atmega328p
 
-ISPFLASH = avrdude -V -F -c $(ISPTOOL) -p $(MCU_TARGET) -P $(ISPPORT) -b $(ISPSPEED) -U flash:w:$(PROGRAM).hex
+CC = avr-g++
+AVRDUDE = avrdude
+OBJCOPY = avr-objcopy
+OBJDUMP = avr-objdump
 
-OBJ       = $(PROGRAM).o
-OPTIMIZE  = -O2
-
-CFLAGS = -Wall $(OPTIMIZE) -mmcu=$(MCU_TARGET) -DF_CPU=16000000UL -I flash:w:$(PROGRAM).hex
+CFLAGS = -Wall -O2 -DF_CPU=16000000UL
 
 all: $(PROGRAM).hex
 
-isp: $(TARGET)
-	$(ISPFLASH)
-
-%.elf: 
-	$(CC) $(CFLAGS) -o $@ $(PROGRAM).cpp
+isp: $(PROGRAM).hex
+	avrdude -V -F -c $(ISPTOOL) -p $(MCU_TARGET) -P $(ISPPORT) -b $(ISPSPEED) -U flash:w:$<
 
 %.hex: %.elf
 	$(OBJCOPY) -O ihex -R .eeprom $< $@
+
+%.elf: %.cpp
+	$(CC) $(CFLAGS) -mmcu=$(MCU_TARGET) -I flash:w:$(PROGRAM).hex -o $@ $<
 
 %.objdump: %.elf
 	$(OBJDUMP) -d $< > $@
@@ -33,3 +29,4 @@ isp: $(TARGET)
 clean:
 	rm -rf *.objdump *.elf *.hex
 
+.PHONY: all clean isp
