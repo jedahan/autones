@@ -25,7 +25,8 @@ uint8_t movie[][2] =  { {4, S}, {HZ, A} };
 uint8_t movie_size = ARRAY_SIZE(movie);
 uint8_t index = 0;
 
-uint8_t buttons;
+uint8_t framesLeft = movie[0][0];
+uint8_t buttons = ~(movie[0][1]);
 
 int main(void) {
   DDRC |= 0b00000100; // pinMode(A2, OUTPUT)
