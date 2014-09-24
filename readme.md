@@ -1,7 +1,11 @@
-an uno, pretending to be a NES controller
+Make your arduino a programmable NES controller.
 
+Arduino | NES Controller Port 
+-----------------------------
+     D2 | Latch
+     D3 | Clock
+     A3 | Data
 
-arduino <=> nes controller port  
-D2 <=> latch  
-D3 <=> clock  
-A3 <=> data
+The NES Controller Port looks like this:
+
+![](nes-controller-pinout.png)
