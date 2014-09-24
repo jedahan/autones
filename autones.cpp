@@ -2,6 +2,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#define ARRAY_SIZE(array) (sizeof((array))/sizeof((array[0])))
+
 #define dataShift 2
 #define dataMask (1 << dataShift)
 
@@ -19,7 +21,8 @@
 #define HZ 60
 
 // a movie is how many frames * what buttons to press
-uint8_t movie[] =  { {2, O}, {HZ, S}, {HZ, A} };
+uint8_t movie[][2] =  { {4, S}, {HZ, A} };
+uint8_t movie_size = ARRAY_SIZE(movie);
 uint8_t index = 0;
 
 uint8_t buttons;
@@ -38,11 +41,12 @@ int main(void) {
 // latch
 ISR(INT0_vect) {
   PORTC = (PORTC & ~dataMask) | ((buttons & 1) << dataShift);
-  framesLeft--;
-  if(framesLeft == 0 && index < sizeof(movie)-1){
-    framesLeft = movie[++index][0];
+  if(framesLeft == 0 && index <= movie_size){
+    index++;
+    framesLeft = movie[index][0];
   }
   buttons = ~(movie[index][1]);
+  framesLeft--;
 }
 
 // clock
