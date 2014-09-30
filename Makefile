@@ -15,7 +15,7 @@ CFLAGS = -Wall -O2 -DF_CPU=16000000UL
 all: $(PROGRAM).hex
 
 isp: $(PROGRAM).hex
-	avrdude -V -F -c $(ISPTOOL) -p $(MCU_TARGET) -P $(ISPPORT) -b $(ISPSPEED) -U flash:w:$<
+	sudo avrdude -V -F -c $(ISPTOOL) -p $(MCU_TARGET) -P $(ISPPORT) -b $(ISPSPEED) -U flash:w:$<
 
 %.hex: %.elf
 	$(OBJCOPY) -O ihex -R .eeprom $< $@
