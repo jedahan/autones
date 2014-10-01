@@ -1,6 +1,8 @@
 fs = require 'fs'
 CSV = require 'comma-separated-values'
 bytes_saved = 0
+movie_buttons = []
+movie_frames = []
 
 fs.readFile process.argv[2], {encoding: 'UTF8'}, (err, data) ->
     csv = new CSV data, {cellDelimiter: '|'}
@@ -13,11 +15,13 @@ fs.readFile process.argv[2], {encoding: 'UTF8'}, (err, data) ->
         run_count++
       else
         bytes_saved += (run_count-4)
-        ino += "{#{run_count},#{buttonstring_to_integer(prev_buttons)}},"
+        movie_buttons.push buttonstring_to_integer(prev_buttons)
+        movie_frames.push run_count
         prev_buttons = buttons
         run_count = 1
-    console.log ino[0..ino.length-2] + "}"
-    console.log "#{bytes_saved} bytes saved with RLE"
+    console.log "PROGMEM const uint8_t buttons[] = {#{movie_buttons}};"
+    console.log "PROGMEM const uint16_t frames[] = {#{movie_frames}};"
+    #console.log "#{bytes_saved} bytes saved with RLE"
 
 buttonstring_to_integer = (buttonstring) ->
   number = 0
