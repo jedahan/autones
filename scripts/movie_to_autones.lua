@@ -45,10 +45,10 @@ while (true) do
         if (frame_number > 1)
         then
             -- We need to skip any lag frames and only output frames where the console is looking for input
-            -- if (lagged == true)
-            -- then
-            --     handle:write("");
-            -- else
+             if (lagged == true)
+             then
+                 handle:write("");
+             else
                 frame = frame + 1;
                 
                 -- Convert the buttons from the movie into byte format and store it to the file
@@ -70,7 +70,7 @@ while (true) do
 		    previous_number = number;
 		    run_count = 1;
 		end;
-            -- end;
+            end;
         end;
         
         -- Check for lag frames and record it

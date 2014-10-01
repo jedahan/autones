@@ -1,0 +1,23 @@
+{
+  "name": "fm2_to_ino",
+  "bugs": "http://github.com/jedahan/autones/issues",
+  "contributors": [
+    "Jonathan Dahan"
+  ],
+  "licenses": [
+    "ISC"
+  ],
+  "version": "0.0.1",
+  "author": "Jonathan Dahan <jonathan@jonathan.is>",
+  "dependencies": {
+    "coffee-script-redux": "^2.0.0-beta8",
+    "comma-separated-values": "^3.6.0"
+  },
+  "scripts": {
+    "start": "coffee --nodejs --harmony fm2_to_ino.coffee filtered.fm2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jedahan/autones.git"
+  }
+}
