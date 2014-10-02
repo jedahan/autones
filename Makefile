@@ -12,7 +12,7 @@ OBJDUMP = avr-objdump
 
 CFLAGS = -Wall -O2 -DF_CPU=16000000UL
 
-all: $(PROGRAM).hex
+all: isp clean
 
 isp: $(PROGRAM).hex
 	sudo avrdude -V -F -c $(ISPTOOL) -p $(MCU_TARGET) -P $(ISPPORT) -b $(ISPSPEED) -U flash:w:$<
