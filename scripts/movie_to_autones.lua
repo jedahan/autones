@@ -14,6 +14,9 @@ local frame_number = 0;
 local skip_lag = true;
 local frame = 0;
 
+local frames = {};
+local buttons = {};
+
 while (true) do
     -- If a movie is loaded into the emulator
     if (movie.active() == true) then
@@ -32,7 +35,6 @@ while (true) do
             
             -- Setup the file handle to write to it
             handle = io.open(output_filename, "w");
-	    handle:write("{");
             
             -- Now we are ready to go.
             movie_loaded = true;
@@ -45,10 +47,8 @@ while (true) do
         if (frame_number > 1)
         then
             -- We need to skip any lag frames and only output frames where the console is looking for input
-             if (lagged == true)
-             then
-                 handle:write("");
-             else
+             if (lagged ~= true)
+	     then
                 frame = frame + 1;
                 
                 -- Convert the buttons from the movie into byte format and store it to the file
@@ -66,7 +66,8 @@ while (true) do
 		then
 		    run_count = run_count + 1;
 		else
-                    handle:write("{"..run_count..","..previous_number.."},");
+		    table.insert(frames,run_count);
+		    table.insert(buttons,previous_number);
 		    previous_number = number;
 		    run_count = 1;
 		end;
@@ -87,7 +88,16 @@ while (true) do
     else
         -- If the movie has ended, then our work here is done. Clean up
         if (movie_loaded == true) then
-            handle:write("{"..run_count..","..previous_number.."}}");
+	    handle:write("PROGMEM const uint16_t frames[] = {");
+	    for i, frame in ipairs(frames) do
+		    handle:write(frame..",");
+	    end
+	    handle:write("0};\n\n")
+	    handle:write("PROGMEM const uint8_t buttons[] = {");
+	    for i, button in ipairs(buttons) do
+		    handle:write(button..",");
+	    end
+	    handle:write("0};")
             handle:close();
             print("DONE");
             movie_loaded = false;
