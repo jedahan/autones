@@ -1,6 +1,7 @@
 *.hex
 *.objdump
 *.swp
+*.txt
 roms/*zip
 npm_debug.log
 node_modules
