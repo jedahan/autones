@@ -5,7 +5,7 @@ Signal | Arduino | Famicom | NES
 Ground |  GND    | 1       | 1
 Clock  |  D3     | 14      | 2
 Latch  |  D2     | 12      | 3
-Data	  |  A3     | 13      | 4
+Data   |  D8     | 13      | 4
 
 
 The NES Controller Port looks like this:
