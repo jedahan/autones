@@ -52,9 +52,9 @@ ISR(INT1_vect) {
   button_number++;
   button >>= 1;
   if(button_number < 8){
-    PORTC = (PORTC & ~dataMask) | ((button & 1) << dataShift);	
+    PORTC = (PORTC & ~dataMask) | ((button & 1) << dataShift);
   } else {
-    PORTC = (PORTC & ~dataMask) | (1 << dataShift);	
+    PORTC = (PORTC & ~dataMask) | (1 << dataShift);
   }
 
 }
