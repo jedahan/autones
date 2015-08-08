@@ -30,28 +30,19 @@ int main(void) {
 
 // latch
 ISR(INT0_vect) {
-  button_number = 0;
   if(frame == 0 && index < movie_size - 1){
     index++;
-    //frame = frames[index];
     frame = pgm_read_word_near(frames + index);
+    button = ~(pgm_read_byte_near(buttons + index));
   }
-  //button = ~(buttons[index]);
-  button = ~(pgm_read_byte_near(buttons + index));
-  PORTD = (PORTD & ~debugPortDMask) | (~button & debugPortDMask);
-  PORTB = (PORTB & ~debugPortBMask) | (~button & debugPortBMask);
-  PORTC = (PORTC & ~dataMask) | ((button & 1) << dataShift);
+  PORTB = button;
+  buttons >>= 1;
   frame--;
 }
 
 // clock
 ISR(INT1_vect) {
-  button_number++;
-  button >>= 1;
-  if(button_number < 8){
-    PORTC = (PORTC & ~dataMask) | ((button & 1) << dataShift);
-  } else {
-    PORTC = (PORTC & ~dataMask) | (1 << dataShift);
-  }
-
+  _delay_ms(1);
+  PORTB = button;
+  buttons >>= 1;
 }
