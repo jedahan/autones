@@ -1,10 +1,12 @@
 Make your arduino a programmable NES/famicom controller.
 
- Arduino | NES Controller
----------|----------------
-      D2 | Latch
-      D3 | Clock
-      A3 | Data	
+Signal | Arduino | Famicom | NES
+-------|---------|---------|----
+Ground |  GND    | 1       | 1
+Clock  |  D3     | 14      | 2
+Latch  |  D2     | 12      | 3
+Data	  |  A3     | 13      | 4
+
 
 The NES Controller Port looks like this:
 
