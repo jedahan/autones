@@ -20,7 +20,7 @@ isp: $(PROGRAM).hex
 %.hex: %.elf
 	$(OBJCOPY) -O ihex -R .eeprom $< $@
 
-%.elf: %.cpp
+%.elf: %.c
 	$(CC) $(CFLAGS) -mmcu=$(MCU_TARGET) -I flash:w:$(PROGRAM).hex -o $@ $<
 
 %.objdump: %.elf
