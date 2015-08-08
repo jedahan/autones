@@ -1,12 +1,6 @@
+#include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <avr/io.h>
-#include <avr/interrupt.h>
-
-#define dataShift 2
-#define dataMask (1 << dataShift)
-
-#define debugPortDMask 0b11110000
-#define debugPortBMask 0b00001111
 
 uint8_t button_number;
 // we are using naive run-length encoding
@@ -21,13 +15,14 @@ uint16_t frame = frames[0];
 uint8_t button = ~(buttons[0]);
 
 int main(void) {
-  DDRB |= debugPortBMask;
-  DDRD |= debugPortDMask;
-  DDRC |= 0b00000100; // pinMode(A2, OUTPUT)
-  EICRA = 0b00001111; // INT0,INT1 RISING
-  EIMSK = 0b00000011; // Enable INT0, INT1
-  PORTC |= dataMask;  // digitalWrite(A2, HIGH)
-  sei(); // enable interrupts
+  // fire interrupt 0 on a rising edge (of pin 2, latch)
+  EICRA = (1<<ISC01) | (1<<ISC00)
+  // fire interrupt 1 on a rising edge (of pin 3, clock)
+  EICRA = (1<<ISC11) | (1<<ISC10)
+  // enable interrupt 1 and interrupt 0
+  EIMSK = (1<<INT1) | (1<<INT0);
+  // global interrupt enable
+  sei();
 
   while(1){ };
   return 1;
