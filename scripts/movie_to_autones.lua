@@ -21,31 +21,30 @@ memory.register(0x4016, record_latch)
 
 while (true) do
   -- If a movie is loaded into the emulator
-  if (movie.active() == true) then
+  if (movie.active()) then
     -- When a movie is loaded for the first time, we need to do some setup
     if (movie_loaded == false) then
-      -- First, restart the movie at the beginning
-      movie.playbeginning();
-      movie_filename = movie.getname();
-      output_filename = string.sub(movie_filename, 0, string.len(movie_filename)-4) .. ".txt";
-      print(output_filename);
-      handle = io.open(output_filename, "w");
-
-      -- Now we are ready to go.
-      movie_loaded = true;
-    end;
-
-    -- Check for lag frames and record it
-    lagged = FCEU.lagged()
-    previous_input = joypad.get(1);
-
-    -- we have finished the movie
-    if (movie_loaded == true) then
+      setup_recording()
+    else
       write_movie()
     end
 
+    lagged = FCEU.lagged()
+    previous_input = joypad.get(1);
     FCEU.frameadvance();
   end
+end
+
+function setup_recording ()
+  -- First, restart the movie at the beginning
+  movie.playbeginning();
+  movie_filename = movie.getname();
+  output_filename = string.sub(movie_filename, 0, string.len(movie_filename)-4) .. ".txt";
+  print(output_filename);
+  handle = io.open(output_filename, "w");
+
+  -- Now we are ready to go.
+  movie_loaded = true;
 end
 
 function record_latch ()
