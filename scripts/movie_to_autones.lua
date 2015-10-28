@@ -9,8 +9,6 @@ local previous_input = {}
 local run_count = 0;
 local previous_number = 0;
 
-local frame_number = 0;
-
 local skip_lag = true;
 local frame = 0;
 
@@ -54,8 +52,7 @@ function record_latch ()
     -- There are some issues with starting this code, so we pretend to skip the first frame
     -- I believe the problem is because when the video is loaded it is at frame 0 which has no input
     -- We need to skip this frame, look for lag, then start watching for input
-    frame_number = movie.framecount();
-    if (frame_number > 1) then
+    if (movie.framecount() > 1) then
       -- We need to skip any lag frames and only output frames where the console is looking for input
       if (lagged ~= true) then
        frame = frame + 1;
