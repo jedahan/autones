@@ -1,32 +1,29 @@
-PROGRAM    = autones
+CONTAINER = $(USER)/fceuxos
+ROOTFS = /var/tmp/rootfs
+TMP = $(shell mktemp)
+CWD = $(shell pwd)
+DEPS = aglar_starwars.ino
 
-ISPTOOL	   = arduino
-ISPPORT	   = /dev/ttyACM0
-ISPSPEED   = 115200
-MCU_TARGET = atmega328p
+all: $(DEPS)
 
-CC = avr-g++
-AVRDUDE = avrdude
-OBJCOPY = avr-objcopy
-OBJDUMP = avr-objdump
+%.ino: movies/$(@:.ino=.fm2)
+	echo cp movies/$(%) $(TMP)
+	echo
+	echo cp roms/$(@:.ino=.zip) $(TMP)
+	echo
+	echo docker run -v $(TMP):$(TMP) -w $(TMP)/$(@:.ino=) -t $(CONTAINER):latest make
 
-CFLAGS = -Wall -O2 -DF_CPU=16000000UL
+fceuxos:
+	docker build -t $(CONTAINER) .
 
-all: isp clean
+push: %-push
+.PHONE: push
 
-isp: $(PROGRAM).hex
-	sudo avrdude -V -F -c $(ISPTOOL) -p $(MCU_TARGET) -P $(ISPPORT) -b $(ISPSPEED) -U flash:w:$<
+%-push:
+	PROGRAM=$(@:-push=) make -f Makefile.arduino
 
-%.hex: %.elf
-	$(OBJCOPY) -O ihex -R .eeprom $< $@
+clean: $(DEPS:.ino=-clean)
+.PHONY: clean
 
-%.elf: %.c
-	$(CC) $(CFLAGS) -mmcu=$(MCU_TARGET) -I flash:w:$(PROGRAM).hex -o $@ $<
-
-%.objdump: %.elf
-	$(OBJDUMP) -d $< > $@
-
-clean:
-	rm -rf *.objdump *.elf *.hex
-
-.PHONY: all clean isp
+%-clean:
+	docker run -v $(CWD)/src:$(TMP) -w $(TMP)/$(@:-clean=) -t $(CONTAINER):latest make clean
