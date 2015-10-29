@@ -1,23 +1,21 @@
 CONTAINER = $(USER)/fceuxos
-ROOTFS = /var/tmp/rootfs
-TMP = $(shell mktemp)
+TMP = /var/tmp
 CWD = $(shell pwd)
-DEPS = aglar_starwars.ino
+DEPS = aglar-starwars.ino
+SCRIPT = movie_to_autones.lua
 
 all: $(DEPS)
 
-%.ino: movies/$(@:.ino=.fm2)
-	echo cp movies/$(%) $(TMP)
-	echo
-	echo cp roms/$(@:.ino=.zip) $(TMP)
-	echo
-	echo docker run -v $(TMP):$(TMP) -w $(TMP)/$(@:.ino=) -t $(CONTAINER):latest make
+%.ino: movies/%.fm2 roms/%.zip
+	cp $^ $(TMP)
+	cp scripts/$(SCRIPT) $(TMP)
+	docker run -v $(TMP):$(TMP) -w $(TMP) -t $(CONTAINER):latest fceux --loadlua $(SCRIPT) --playmov $(@:.ino=.fm2) $(@:.ino=.zip)
 
 fceuxos:
 	docker build -t $(CONTAINER) .
 
 push: %-push
-.PHONE: push
+.PHONY: push
 
 %-push:
 	PROGRAM=$(@:-push=) make -f Makefile.arduino
