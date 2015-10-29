@@ -16,7 +16,17 @@ The famicom Expansion Port looks like this:
 
 ![](famicom-expansion-pinout.jpg)
 
-### Converting fm2 to ino movie
+### Converting fm2 to ino movie manually
 
     fceux --loadlua scripts/movie_to_autones.lua --playmov movies/micro_ghosts_n_goblins.fm2 roms/ghosts_n_goblins.zip
 
+## Building the docker image
+
+    docker-machine create --driver virtualbox dev
+    eval "$(docker-machine env dev)"
+
+    make fceuxos
+
+## Creating a .ino file from the docker image
+
+    make
