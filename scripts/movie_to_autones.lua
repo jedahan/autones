@@ -1,5 +1,4 @@
 local movie_loaded = false -- This tells if the program has initialized for the movie
-local movie_filename = "" -- Will hold the movie file name (.fm2)
 local output_filename = "" -- Will hold the output file name (.txt)
 local handle -- For ouputing to the file
 
@@ -36,8 +35,7 @@ end
 function setup_recording ()
   -- First, restart the movie at the beginning
   movie.playbeginning()
-  movie_filename = movie.getname()
-  output_filename = string.sub(movie_filename, 0, string.len(movie_filename)-4) .. ".txt"
+  output_filename = string.match(movie.getname(), "^(.+)%..-$") .. ".txt"
   print(output_filename)
   handle = io.open(output_filename, "w")
 
@@ -67,24 +65,17 @@ function record_latch ()
   if number == previous_number then
     run_count = run_count + 1
   else
-    table.insert(frames, run_count)
-    table.insert(buttons, previous_number)
+    frames[#frames+1] = run_count
+    buttons[#buttons+1] = previous_count
     previous_number = number
     run_count = 1
   end;
 end
 
 function write_movie()
-  handle:write("PROGMEM const uint16_t frames[] = {")
-  for i, frame in ipairs(frames) do
-    handle:write(frame..",")
-  end
-  handle:write("0};\n\n")
-  handle:write("PROGMEM const uint8_t buttons[] = {")
-  for i, button in ipairs(buttons) do
-    handle:write(button..",")
-  end
-  handle:write("0};")
+  handle:write(string.format("PROGMEM const uint16_t frames[] = {%s0}", table.concat(frames, ",")))
+  handle:write("\n\n")
+  handle:write(string.format("PROGMEM const uint8_t buttons[] = {%s0}", table.concat(buttons, ",")))
   handle:close()
   print("DONE")
   movie_loaded = false
