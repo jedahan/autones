@@ -1,10 +1,8 @@
-FROM debian/latest
+FROM debian:latest
 
 MAINTAINER Jonathan Dahan jonathan@jonathan.is
 
-COPY scripts/movie_to_autones.lua /usr/local/share
-
-RUN apt-get install -y make gcc fceux
+RUN apt-get update && apt-get upgrade -y && apt-get install -y fceux
 
 VOLUME /var/tmp
 
