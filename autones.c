@@ -2,6 +2,8 @@
 #include <avr/pgmspace.h>
 #include <avr/io.h>
 
+#define loop true
+
 uint8_t button_number;
 // we are using naive run-length encoding
 // frames[0] corresponds to how many frames we should be pressing buttons[0]
@@ -38,7 +40,11 @@ int main(void) {
 
   while(1){
     if(index == movie_size) {
-      cli();
+#ifdef loop
+      index = 0;
+#else
+        cli();
+#endif
     }
   };
   return 1;
