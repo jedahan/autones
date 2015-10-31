@@ -1,15 +1,18 @@
 CONTAINER = $(USER)/fceuxos
 TMP = /var/tmp
 CWD = $(shell pwd)
-DEPS = aglar-starwars.ino
+SOURCE = movies/
+MOVIES := $(wildcard $(SOURCE)*.fm2)
+TARGETS = $(MOVIES:$(SOURCE)%.fm2=%.ino)
 SCRIPT = movie_to_autones.lua
 
-all: $(DEPS)
+all: $(TARGETS)
 
-%.ino: movies/%.fm2 roms/%.zip
-	cp $^ $(TMP)
-	cp scripts/$(SCRIPT) $(TMP)
-	docker run -v $(TMP):$(TMP) -w $(TMP) -t $(CONTAINER):latest fceux --loadlua $(SCRIPT) --playmov $(@:.ino=.fm2) $(@:.ino=.zip)
+%.ino: movies/$(%.fm2) roms/$(%.nes)
+	@echo making $@
+	@echo cp $^ $(TMP)
+	@echo cp scripts/$(SCRIPT) $(TMP)
+	@echo docker run -d -v /autones:$(TMP) -w /autones -t $(CONTAINER):latest /usr/games/fceux --loadlua $(SCRIPT) --playmov $(@:.ino=.fm2) $(@:.ino=.zip)
 
 fceuxos:
 	docker build -t $(CONTAINER) .
