@@ -8,11 +8,12 @@ SCRIPT = movie_to_autones.lua
 
 all: $(TARGETS)
 
-%.ino: movies/$(%.fm2) roms/$(%.nes)
-	@echo making $@
-	@echo cp $^ $(TMP)
-	@echo cp scripts/$(SCRIPT) $(TMP)
-	@echo docker run -d -v /autones:$(TMP) -w /autones -t $(CONTAINER):latest /usr/games/fceux --loadlua $(SCRIPT) --playmov $(@:.ino=.fm2) $(@:.ino=.zip)
+%.ino: movies/%.fm2
+	@cp scripts/$(SCRIPT) $(TMP)
+	@cp movies/$(*).fm2 $(TMP)
+	@cp roms/$(shell echo $* | cut -d'-' -f2).nes $(TMP)
+	@docker run -v $(CWD)/src:$(TMP) -w $(TMP) -t $(CONTAINER):latest \
+    fceux --loadlua $(SCRIPT) --playmov $(*).fm2 $(shell echo $* | cut -d'-' -f2).nes
 
 fceuxos:
 	docker build -t $(CONTAINER) .
