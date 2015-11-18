@@ -2,6 +2,6 @@
 *.objdump
 *.swp
 *.txt
-roms/*zip
+roms/*
 npm_debug.log
 node_modules
