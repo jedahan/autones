@@ -1,8 +1,8 @@
-PROGRAM    = autones
+PROGRAM = autones
 
-ISPTOOL	   = arduino
-ISPPORT	   = /dev/ttyACM0
-ISPSPEED   = 115200
+ISPTOOL = arduino
+ISPPORT = /dev/tty.usbmodem1421
+ISPSPEED = 115200
 MCU_TARGET = atmega328p
 
 CC = avr-g++
@@ -11,7 +11,6 @@ OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
 
 CFLAGS = -Wall -O2 -DF_CPU=16000000UL
-
 all: isp clean
 
 isp: $(PROGRAM).hex
@@ -21,7 +20,7 @@ isp: $(PROGRAM).hex
 	$(OBJCOPY) -O ihex -R .eeprom $< $@
 
 %.elf: %.c
-	$(CC) $(CFLAGS) -mmcu=$(MCU_TARGET) -I flash:w:$(PROGRAM).hex -o $@ $<
+	$(CC) $(CFLAGS) -mmcu=$(MCU_TARGET) -o $@ $<
 
 %.objdump: %.elf
 	$(OBJDUMP) -d $< > $@
